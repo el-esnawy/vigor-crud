@@ -1,8 +1,7 @@
-FROM node:alpine
-RUN apk add --no-cache nodejs npm
-COPY . /server
-COPY package.json /server
-COPY . /server
-EXPOSE 8080
+FROM node
 WORKDIR /server
-CMD node server.js
+COPY package.json /server
+RUN npm install
+COPY . /server
+EXPOSE 5000
+CMD ["npm", "start"]

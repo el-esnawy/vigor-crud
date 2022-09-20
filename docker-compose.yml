@@ -1,35 +1,31 @@
-# version: "3"
-# services:
-#   backend:
-#     container_name: backend
-#     image: latest/backend
-#     restart: always
-#     build: ./backend
-#     depends_on:
-#       - mongo
-#     ports:
-#       - "8080:8080"
-#   mongo:
-#     image: mongo:4.0-xenial
-#     ports:
-#       - "27017:27017"
-#     volumes:
-#       - notes:/data/db
-
-# volumes:
-#   notes:
-
 version: "3"
 services:
   backend:
+    networks:
+      - webappnetwork
     restart: always
     build: ./backend
     ports:
-      - "8080:8080"
+      - "5000:5000"
     links:
       - mongo
   mongo:
     image: mongo
     restart: always
+    networks:
+      - webappnetwork
     ports:
       - "27017:27017"
+  frontend:
+    build: ./frontend
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    ports:
+      - "8080:3000"
+    networks:
+      - webappnetwork
+networks:
+  webappnetwork:
+    driver: bridge

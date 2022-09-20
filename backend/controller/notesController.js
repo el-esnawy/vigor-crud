@@ -2,6 +2,7 @@ const Note = require("../model/notes");
 
 const createNote = async (req, res) => {
   try {
+    console.log(req.body);
     const { content, done } = req.body;
     const note = new Note({ content, done });
     const savedNote = await note.save();
@@ -13,10 +14,6 @@ const createNote = async (req, res) => {
 const getNotes = async (req, res) => {
   try {
     const allNotes = await Note.find({});
-    if (allNotes.length === 0) {
-      return res.status(404).json({ status: "FAIL", error: "No notes found" });
-    }
-
     return res.status(200).json({ status: "SUCCESS", data: allNotes });
   } catch (error) {
     res.status(400).json({ status: "FAIL", error });
@@ -24,12 +21,14 @@ const getNotes = async (req, res) => {
 };
 const updateNote = async (req, res) => {
   try {
-    const { body } = req;
-    if (!body || !req.params.id) {
+    const { content, done } = req.body;
+    console.log(content, done);
+    if (!req.params.id) {
       return res.status(400).json({ status: "FAIL", error: "Must provide a note ID" });
     }
 
-    const note = await Note.findOneAndUpdate({ _id: req.params.id }, body);
+    const note = await Note.findOneAndUpdate({ _id: req.params.id }, { content, done });
+    console.log(note);
 
     res.status(200).json({ status: "SUCCESS", data: note });
   } catch (error) {
